@@ -1,6 +1,6 @@
 başlatmak için 
 
-vllm serve Qwen/Qwen3-8B --host localhost --port 9001
+vllm serve qwen2.5-coder:7b --host localhost --port 9001
 
 python run_server.py
 
