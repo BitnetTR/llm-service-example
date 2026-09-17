@@ -1,6 +1,8 @@
-başlatmak için 
+başlatmak için : 
 
-vllm serve qwen2.5-coder:7b --host localhost --port 9001
-
+cd server
 python run_server.py
 
+
+cd client
+streamlit run app.py
