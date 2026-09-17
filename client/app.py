@@ -124,12 +124,19 @@ def main():
 
             if message["role"] == "assistant":
                 usage = message.get("usage")
+                energy = message.get("energy")
 
                 if usage:
                     st.caption(
                         f"Input: {usage.get('prompt_tokens', 0)} tokens · "
                         f"Output: {usage.get('completion_tokens', 0)} tokens · "
                         f"Total: {usage.get('total_tokens', 0)} tokens"
+                    )
+
+                if energy:
+                    st.caption(
+                        f"Avg power: {energy.get('avg_power_w', 0)} W · "
+                        f"Energy: {energy.get('energy_wh', 0)} Wh"
                     )
 
     # Chat input
@@ -168,6 +175,7 @@ def main():
 
                 answer = result["message"]
                 usage = result.get("usage")
+                energy = result.get("energy")
 
                 st.markdown(answer)
 
@@ -178,10 +186,17 @@ def main():
                         f"Total: {usage.get('total_tokens', 0)} tokens"
                     )
 
+                if energy:
+                    st.caption(
+                        f"Avg power: {energy.get('avg_power_w', 0)} W · "
+                        f"Energy: {energy.get('energy_wh', 0)} Wh"
+                    )
+
                 st.session_state.messages.append({
                     "role": "assistant",
                     "content": answer,
                     "usage": usage,
+                    "energy": energy,
                 })
 
             except Exception as e:

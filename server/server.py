@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
 
+from power import GpuPowerMonitor
+
 load_dotenv()
 
 # server için key
@@ -57,11 +59,16 @@ async def chat(
         "temperature": 0.7,
     }
 
+    monitor = GpuPowerMonitor()
+    monitor.start()
+
     async with httpx.AsyncClient(timeout=120.0) as client:
         response = await client.post(
             f"{VLLM_BASE_URL}/chat/completions",
             json=payload,
         )
+
+    energy = monitor.stop()
 
     if response.status_code != 200:
         raise HTTPException(
@@ -75,6 +82,7 @@ async def chat(
         "message": data["choices"][0]["message"]["content"],
         "usage": data.get("usage"),
         "model": MODEL_NAME,
+        "energy": energy,
     }
 
 

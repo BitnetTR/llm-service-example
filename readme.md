@@ -8,3 +8,10 @@ Fakat biz LLM'i kendi sunucumuzda host ettiğimiz bir senaryoda vLLM gibi şeyle
 Ama mantık basit, cliennt'de bir istek server'a gelecek. Server'da llm çalışacak ve üstteki metrikleri de toplayıp kullanıcı tarafında (panelde) gösterecek. Hatta nvidi-smi ile enerji tüketimini de gösterebiliriz. 
 
 Bu nedenle bu uygulama başladı.
+
+
+Verisyonlama : 
+
+v0 - v0.8 : LLM'e request atıp response alabildiğimiz bir servis oldu. Şu anda düz HTTP mantığında çalışıyor. Maalesef server tarafını uzak sununucuda serve edemedim. Droplet'te ram ve cpu tüketimi fırlayınca durdurdum. Lokalde de windows'ta vllm sorun çıkarıyor gibiydi. Bu nedenle server tarafını doğreudan vllm kaldırıp basit tuttum. 
+
+v0.9 : 
