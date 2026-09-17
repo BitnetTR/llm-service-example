@@ -6,13 +6,17 @@ from pydantic import BaseModel
 
 load_dotenv()
 
-VLLM_PORT = os.getenv("VLLM_PORT", "8080")
+# server için key
 API_KEY = os.getenv("API_KEY")
-VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", f"http://localhost:{VLLM_PORT}/v1")
+# vllm kısmı
+VLLM_HOST = os.getenv("VLLM_HOST", "localhost")
+VLLM_PORT = os.getenv("VLLM_PORT", "8080")
 MODEL_NAME = os.getenv("MODEL_NAME")
+# url .env içerisinden dinamik okunuuyo
+VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", f"http://{VLLM_HOST}:{VLLM_PORT}/v1")
+
 
 app = FastAPI(title="LLM Demo Server")
-
 
 class ChatRequest(BaseModel):
     message: str
