@@ -1,5 +1,4 @@
 import os
-
 import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException
@@ -7,8 +6,9 @@ from pydantic import BaseModel
 
 load_dotenv()
 
+VLLM_PORT = os.getenv("VLLM_PORT", "8080")
 API_KEY = os.getenv("API_KEY")
-VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", "http://localhost:8000/v1")
+VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", f"http://localhost:{VLLM_PORT}/v1")
 MODEL_NAME = os.getenv("MODEL_NAME")
 
 app = FastAPI(title="LLM Demo Server")
