@@ -88,6 +88,18 @@ def main():
 
         total_tokens = total_input + total_output
 
+        total_energy_wh = sum(
+            m.get("energy", {}).get("energy_wh", 0)
+            for m in assistant_messages
+            if m.get("energy")
+        )
+
+        total_cost_tl = sum(
+            m.get("energy", {}).get("cost_tl", 0)
+            for m in assistant_messages
+            if m.get("energy")
+        )
+
         col1, col2 = st.columns(2)
 
         with col1:
@@ -100,6 +112,20 @@ def main():
             st.metric(
                 "Tokens",
                 total_tokens,
+            )
+
+        col3, col4 = st.columns(2)
+
+        with col3:
+            st.metric(
+                "Energy",
+                f"{total_energy_wh:.3f} Wh",
+            )
+
+        with col4:
+            st.metric(
+                "Cost",
+                f"{total_cost_tl:.4f} ₺",
             )
 
         st.divider()
@@ -136,7 +162,8 @@ def main():
                 if energy:
                     st.caption(
                         f"Avg power: {energy.get('avg_power_w', 0)} W · "
-                        f"Energy: {energy.get('energy_wh', 0)} Wh"
+                        f"Energy: {energy.get('energy_wh', 0)} Wh · "
+                        f"Cost: {energy.get('cost_tl', 0):.4f} ₺"
                     )
 
     # Chat input
@@ -189,7 +216,8 @@ def main():
                 if energy:
                     st.caption(
                         f"Avg power: {energy.get('avg_power_w', 0)} W · "
-                        f"Energy: {energy.get('energy_wh', 0)} Wh"
+                        f"Energy: {energy.get('energy_wh', 0)} Wh · "
+                        f"Cost: {energy.get('cost_tl', 0):.4f} ₺"
                     )
 
                 st.session_state.messages.append({

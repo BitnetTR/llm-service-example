@@ -16,6 +16,7 @@ VLLM_PORT = os.getenv("VLLM_PORT", "8080")
 MODEL_NAME = os.getenv("MODEL_NAME")
 # url .env içerisinden dinamik okunuuyo
 VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", f"http://{VLLM_HOST}:{VLLM_PORT}/v1")
+ELECTRICITY_PRICE_TL_PER_KWH = float(os.getenv("ELECTRICITY_PRICE_TL_PER_KWH", "0"))
 
 
 app = FastAPI(title="LLM Demo Server")
@@ -69,6 +70,9 @@ async def chat(
         )
 
     energy = monitor.stop()
+    energy["cost_tl"] = round(
+        (energy["energy_wh"] / 1000) * ELECTRICITY_PRICE_TL_PER_KWH, 6
+    )
 
     if response.status_code != 200:
         raise HTTPException(
