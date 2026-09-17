@@ -10,12 +10,12 @@ load_dotenv()
 
 # server için key
 API_KEY = os.getenv("API_KEY")
-# vllm kısmı
-VLLM_HOST = os.getenv("VLLM_HOST", "localhost")
-VLLM_PORT = os.getenv("VLLM_PORT", "8080")
+# llm backend
+LLM_HOST = os.getenv("LLM_HOST", "localhost")
+LLM_PORT = os.getenv("LLM_PORT", "11434")
 MODEL_NAME = os.getenv("MODEL_NAME")
 # url .env içerisinden dinamik okunuuyo
-VLLM_BASE_URL = os.getenv("VLLM_BASE_URL", f"http://{VLLM_HOST}:{VLLM_PORT}/v1")
+LLM_BASE_URL = os.getenv("LLM_BASE_URL", f"http://{LLM_HOST}:{LLM_PORT}/v1")
 ELECTRICITY_PRICE_TL_PER_KWH = float(os.getenv("ELECTRICITY_PRICE_TL_PER_KWH", "0"))
 
 
@@ -65,7 +65,7 @@ async def chat(
 
     async with httpx.AsyncClient(timeout=120.0) as client:
         response = await client.post(
-            f"{VLLM_BASE_URL}/chat/completions",
+            f"{LLM_BASE_URL}/chat/completions",
             json=payload,
         )
 
