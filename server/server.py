@@ -1,4 +1,5 @@
 import os
+import time
 import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException
@@ -62,6 +63,7 @@ async def chat(
 
     monitor = GpuPowerMonitor()
     monitor.start()
+    start_time = time.perf_counter()
 
     async with httpx.AsyncClient(timeout=120.0) as client:
         response = await client.post(
@@ -69,6 +71,7 @@ async def chat(
             json=payload,
         )
 
+    latency_s = time.perf_counter() - start_time
     energy = monitor.stop()
     energy["cost_tl"] = round(
         (energy["energy_wh"] / 1000) * ELECTRICITY_PRICE_TL_PER_KWH, 6
@@ -81,12 +84,20 @@ async def chat(
         )
 
     data = response.json()
+    usage = data.get("usage") or {}
+    completion_tokens = usage.get("completion_tokens", 0)
+
+    performance = {
+        "latency_s": round(latency_s, 3),
+        "tokens_per_second": round(completion_tokens / latency_s, 2) if latency_s > 0 else 0,
+    }
 
     return {
         "message": data["choices"][0]["message"]["content"],
         "usage": data.get("usage"),
         "model": MODEL_NAME,
         "energy": energy,
+        "performance": performance,
     }
 
 

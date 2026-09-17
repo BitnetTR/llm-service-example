@@ -100,6 +100,24 @@ def main():
             if m.get("energy")
         )
 
+        performance_messages = [
+            m for m in assistant_messages if m.get("performance")
+        ]
+
+        avg_latency_s = (
+            sum(m["performance"].get("latency_s", 0) for m in performance_messages)
+            / len(performance_messages)
+            if performance_messages
+            else 0
+        )
+
+        avg_tokens_per_second = (
+            sum(m["performance"].get("tokens_per_second", 0) for m in performance_messages)
+            / len(performance_messages)
+            if performance_messages
+            else 0
+        )
+
         col1, col2 = st.columns(2)
 
         with col1:
@@ -128,6 +146,20 @@ def main():
                 f"{total_cost_tl:.4f} ₺",
             )
 
+        col5, col6 = st.columns(2)
+
+        with col5:
+            st.metric(
+                "Avg Latency",
+                f"{avg_latency_s:.2f} s",
+            )
+
+        with col6:
+            st.metric(
+                "Avg Tokens/s",
+                f"{avg_tokens_per_second:.1f}",
+            )
+
         st.divider()
 
         if st.button(
@@ -151,6 +183,7 @@ def main():
             if message["role"] == "assistant":
                 usage = message.get("usage")
                 energy = message.get("energy")
+                performance = message.get("performance")
 
                 if usage:
                     st.caption(
@@ -159,9 +192,16 @@ def main():
                         f"Total: {usage.get('total_tokens', 0)} tokens"
                     )
 
+                if performance:
+                    st.caption(
+                        f"Latency: {performance.get('latency_s', 0)} s · "
+                        f"Speed: {performance.get('tokens_per_second', 0)} tok/s"
+                    )
+
                 if energy:
                     st.caption(
                         f"Avg power: {energy.get('avg_power_w', 0)} W · "
+                        f"GPU util: {energy.get('avg_gpu_utilization_pct', 0)}% · "
                         f"Energy: {energy.get('energy_wh', 0)} Wh · "
                         f"Cost: {energy.get('cost_tl', 0):.4f} ₺"
                     )
@@ -203,6 +243,7 @@ def main():
                 answer = result["message"]
                 usage = result.get("usage")
                 energy = result.get("energy")
+                performance = result.get("performance")
 
                 st.markdown(answer)
 
@@ -213,9 +254,16 @@ def main():
                         f"Total: {usage.get('total_tokens', 0)} tokens"
                     )
 
+                if performance:
+                    st.caption(
+                        f"Latency: {performance.get('latency_s', 0)} s · "
+                        f"Speed: {performance.get('tokens_per_second', 0)} tok/s"
+                    )
+
                 if energy:
                     st.caption(
                         f"Avg power: {energy.get('avg_power_w', 0)} W · "
+                        f"GPU util: {energy.get('avg_gpu_utilization_pct', 0)}% · "
                         f"Energy: {energy.get('energy_wh', 0)} Wh · "
                         f"Cost: {energy.get('cost_tl', 0):.4f} ₺"
                     )
@@ -225,6 +273,7 @@ def main():
                     "content": answer,
                     "usage": usage,
                     "energy": energy,
+                    "performance": performance,
                 })
 
             except Exception as e:
